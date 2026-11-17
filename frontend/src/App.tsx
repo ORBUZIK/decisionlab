@@ -350,10 +350,10 @@ export default function App() {
                 return <div className="pairwise-row" key={left.key+right.key}>
                   <div className="pairwise-label"><b>{left.label}</b><small>в сравнении с</small><b>{right.label}</b></div>
                   <select aria-label={left.label + ' относительно ' + right.label}
-                    value={String(Math.round(ratio*10000)/10000)}
+                    value={String(ratio)}
                     onChange={e => setComparison(i,j,e.target.value)}>
                     {[1/9,1/8,1/7,1/6,1/5,1/4,1/3,1/2,1,2,3,4,5,6,7,8,9].map(v =>
-                      <option key={v} value={String(Math.round(v*10000)/10000)}>{nice(v,3)}×</option>)}
+                      <option key={v} value={String(v)}>{nice(v,3)}×</option>)}
                   </select></div>;
               }))}</div>}
               {!data.pairwise && <div className="empty-ahp"><GitCompareArrows size={36}/><b>Попарное сравнение выключено</b><p>Включите AHP, чтобы рассчитать веса методом Саати и проверить согласованность предпочтений.</p></div>}

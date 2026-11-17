@@ -47,6 +47,12 @@ class AnalysisTests(SimpleTestCase):
         with self.assertRaises(DataError):
             validate_payload(data)
 
+    def test_ahp_extreme_comparison(self):
+        data = sample()
+        data["pairwise"] = [[1, 1/9], [9, 1]]
+        result = run_analysis(data)
+        self.assertAlmostEqual(result["weights"][1]["weight"], .9, places=6)
+
     def test_nonreciprocal_ahp_rejected(self):
         data = sample()
         data["pairwise"] = [[1, 3], [3, 1]]
