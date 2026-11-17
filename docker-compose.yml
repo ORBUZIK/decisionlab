@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-decisionlab}
+      POSTGRES_USER: ${POSTGRES_USER:-decisionlab}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-password}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-decisionlab} -d ${POSTGRES_DB:-decisionlab}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-decisionlab}:${POSTGRES_PASSWORD:-local-dev-password}@db:5432/${POSTGRES_DB:-decisionlab}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-development-key-change-before-deployment}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports: ["127.0.0.1:8080:80"]
+    depends_on: [backend]
+
+volumes:
+  pgdata:
