@@ -9,7 +9,7 @@ import Chart from './Chart';
 import { analyze, deleteScenario, getScenario, listScenarios, saveScenario } from './api';
 import { cloneDemo } from './demo';
 import { downloadText, exportCsv, importCsv } from './csv';
-import type { Analysis, Criterion, Dataset, Ranked, ScenarioSummary } from './types';
+import type { Analysis, Dataset, Ranked, ScenarioSummary } from './types';
 
 type Page = 'overview' | 'data' | 'weights' | 'results' | 'history';
 type Method = 'topsis' | 'electre' | 'saw';
@@ -43,9 +43,9 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
 }
 
 function initialMatrix(data: Dataset): number[][] {
-  const weights = data.criteria.map(c => Math.max(c.weight, .0001));
-  return weights.map((weight, i) => weights.map((other, j) => i === j ? 1 :
-    Math.min(9, Math.max(1 / 9, weight / other))));
+  const size = data.criteria.length;
+  return Array.from({ length: size }, (_, i) =>
+    Array.from({ length: size }, (_, j) => i === j ? 1 : 1));
 }
 
 export default function App() {
